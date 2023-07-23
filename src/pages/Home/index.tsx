@@ -43,6 +43,7 @@ export function Home() {
     },
   })
 
+  // Criar um novo ciclo
   function handleCreateNewCycle(data: NewCycleFormData) {
     const id = String(new Date().getTime())
 
@@ -53,7 +54,7 @@ export function Home() {
     }
 
     setCyles((state) => [...state, newCycle])
-    setActiveCycleId(id)
+    setActiveCycleId(id) // Ao criar um ciclo, seta o Id do ciclo "ativo" no estado
 
     reset()
   }

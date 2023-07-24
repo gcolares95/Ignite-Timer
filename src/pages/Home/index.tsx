@@ -15,8 +15,6 @@ import {
 } from './styles'
 import { useEffect, useState } from 'react'
 
-// controlled / uncontrolled
-
 // Schema: Que forma os dados serão validados.
 const newCycleFormValidationSchema = zod.object({
   task: zod.string().min(1, 'Informe a tarefa'),
@@ -48,12 +46,19 @@ export function Home() {
   const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
 
   useEffect(() => {
+    let interval: number
+
     if (activeCycle) {
-      setInterval(() => {
+      interval = setInterval(() => {
         setAmountSecondsPassed(
           differenceInSeconds(new Date(), activeCycle.startDate),
         )
       }, 1000)
+    }
+
+    return () => {
+      // remove o intervalo, quando um novo for criado
+      clearInterval(interval)
     }
   }, [activeCycle])
 
@@ -70,6 +75,7 @@ export function Home() {
 
     setCyles((state) => [...state, newCycle])
     setActiveCycleId(id) // Ao criar um ciclo, seta o Id do ciclo "ativo" no estado
+    setAmountSecondsPassed(0) // Reseta os segundos que foram "passados" ao criar novo ciclo, caso já tenha um existente
 
     reset()
   }
@@ -82,6 +88,12 @@ export function Home() {
 
   const minutes = String(minutesAmount).padStart(2, '0')
   const seconds = String(secondsAmount).padStart(2, '0')
+
+  useEffect(() => {
+    if (activeCycle) {
+      document.title = `${minutes}:${seconds}`
+    }
+  }, [minutes, seconds, activeCycle])
 
   // Observar o valor do cmapo de task em tempo real
   const task = watch('task')
